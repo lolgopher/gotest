@@ -19,12 +19,14 @@ func main() {
 		targetPath      string
 		failed          bool
 		failedToNotSent bool
+		notSent         bool
 		removeZeroSize  bool
 	)
 	flag.StringVar(&targetPath, "path", rootPath, "Target Path to search metadata files")
 	flag.BoolVar(&failed, "failed", false, "Search failed status")
 	flag.BoolVar(&failedToNotSent, "retry", false, "Change failed to notsent status")
-	flag.BoolVar(&removeZeroSize, "zero", false, "Remove zero size and notsent status")
+	flag.BoolVar(&notSent, "notsent", false, "Search notsent status")
+	flag.BoolVar(&removeZeroSize, "zero", false, "Remove zero size to notsent status")
 
 	flag.Parse()
 	targetPath, err := filepath.Abs(filepath.Join(".", targetPath))
@@ -33,6 +35,7 @@ func main() {
 	}
 	log.Printf("path: %v", targetPath)
 	log.Printf("retry: %v", failedToNotSent)
+	log.Printf("notsent: %v", notSent)
 	log.Printf("zero: %v", removeZeroSize)
 
 	if failed {
@@ -43,8 +46,7 @@ func main() {
 		}
 	}
 
-	if removeZeroSize {
-
+	if notSent {
 	}
 }
 
