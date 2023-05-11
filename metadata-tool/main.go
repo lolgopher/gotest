@@ -30,7 +30,7 @@ func main() {
 	flag.BoolVar(&removeZeroSize, "zero", false, "Remove zero size to notsent status")
 
 	flag.Parse()
-	targetPath, err := filepath.Abs(filepath.Join(".", targetPath))
+	targetPath, err := filepath.Abs(targetPath)
 	if err != nil {
 		log.Fatal(err)
 	}
