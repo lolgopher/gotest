@@ -64,7 +64,7 @@ func searchFailedStatus(targetPath string, failedToNotSent bool) (string, error)
 		return "", err
 	}
 
-	rootPath, err = filepath.Abs(filepath.Join(targetPath, ".."))
+	targetRootPath, err := filepath.Abs(filepath.Join(targetPath, ".."))
 	if err != nil {
 		return "", err
 	}
@@ -73,9 +73,45 @@ func searchFailedStatus(targetPath string, failedToNotSent bool) (string, error)
 		result += key + "\n"
 
 		if failedToNotSent {
-			if err := protocol.WriteMetadata(filepath.Join(rootPath, key), 0, protocol.NotSent); err != nil {
+			// 폴더 경로와 메타데이터 파일 경로 설정
+			filePath := filepath.Join(targetRootPath, key)
+			folderPath := filepath.Dir(filePath)
+			metadataFilePath := filepath.Join(folderPath, "metadata.yaml")
+
+			// 메타데이터 파일 읽기
+			data, err := os.ReadFile(metadataFilePath)
+			if err != nil {
 				return "", err
 			}
+			metadata := make(map[string]protocol.FileMetadata)
+			if err := yaml.Unmarshal(data, &metadata); err != nil {
+				return "", fmt.Errorf("fail to unmarshal %s metadata file: %v", metadataFilePath, err)
+			}
+
+			// 방어 코드
+			if _, ok := metadata[key]; !ok {
+				return "", fmt.Errorf("fail to find %s in %s metadata file", key, metadataFilePath)
+			}
+
+			// 메타데이터 업데이트
+			metadata[key] = protocol.FileMetadata{
+				Size:   metadata[key].Size,
+				Status: string(protocol.NotSent),
+			}
+
+			// 메타데이터 파일 쓰기
+			metadataData, err := yaml.Marshal(metadata)
+			if err != nil {
+				return "", fmt.Errorf("fail to marshal %s : %s metadata file: %v", filePath, protocol.NotSent, err)
+			}
+			if err := os.WriteFile(metadataFilePath, metadataData, 0644); err != nil {
+				return "", fmt.Errorf("fail to write %s file: %v", metadataFilePath, err)
+			}
+		}
+	}
+
+	return result, nil
+}
 
 func searchNotSentStatus(targetPath string, removeZeroSize bool) (string, error) {
 	result := "\n"
