@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    environment:
+      HOSTNAME: 10.182.60.133
+      FLUENT_FORWARD_PORT: 24224
+    ports:
+      - 24224:24224/tcp
+    volumes:
+      - ./fluentbit:/conf
+    command:
+      - -c
+      - /conf/flb.conf
+    networks:
+      - default
+  fluentbit-test:
+    image: fluentbit-test:latest
+    environment:
+      HOSTNAME: "docker"
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
