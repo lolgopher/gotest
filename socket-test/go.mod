@@ -1,3 +1,3 @@
-module github.com/gopher/socket-test
+module github.com/lolgopher/gotest/socket-test
 
 go 1.20
