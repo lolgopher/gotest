@@ -1,0 +1,9 @@
+provider:
+  name: openfaas
+  gateway: http://ccaas-ibc-perftest3.kep.k9d.in
+
+functions:
+  hello-go:
+    lang: go
+    handler: ../openfaas-echo
+    image: nebuchadnezzar.kr-central-1.kcr.dev/openfaas-repository/hello-go:dev
