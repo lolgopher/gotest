@@ -1,0 +1,11 @@
+specVersion: 0.36.0
+name: echo
+runtime: go
+registry: omega-seamaster.kr-central-2.kcr.dev/knative-function/
+namespace: default
+created: 2024-06-20T21:25:18.098132034+09:00
+build:
+  builder: pack
+deploy:
+  namespace: default
+  image: omega-seamaster.kr-central-2.kcr.dev/knative-function/echo:latest
